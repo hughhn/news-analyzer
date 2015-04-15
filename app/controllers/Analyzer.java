@@ -12,7 +12,7 @@ public class Analyzer {
     public static Result getMetadata(String url) {
         ObjectNode result = Json.newObject();
 
-        result.put("content", url);
+        result.put("url", url);
 
         return Results.ok(result);
     }
