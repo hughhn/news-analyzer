@@ -23,11 +23,20 @@ public class Analyzer extends Controller {
 
         result.put("url", url);
 
+//        WebURL crawlUrl = new WebURL();
+//        crawlUrl.setURL(url);
 
-        WebURL crawlUrl = new WebURL();
-        crawlUrl.setURL("https://www.google.com");
-        crawler.visit(new Page(crawlUrl));
-        logger.debug("crawler initiated!");
+        String[] args = new String[3];
+        args[0] = "./crawler_data";
+        args[1] = "2";
+        args[2] = url;
+
+        try {
+            BasicCrawlController.run(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("crawler error!");
+        }
 
         return Results.ok(result);
     }
