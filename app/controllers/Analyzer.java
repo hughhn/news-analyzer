@@ -7,8 +7,11 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import services.CrossValidateNews;
 import services.SimpleWebCrawler;
 import org.neo4j.graphdb.GraphDatabaseService;
+
+import java.io.IOException;
 
 /**
  * Created by hugo on 4/14/15.
@@ -37,6 +40,12 @@ public class Analyzer extends Controller {
 //            e.printStackTrace();
 //            logger.error("crawler error!");
 //        }
+
+        try {
+            CrossValidateNews.run(args);
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
 
         return Results.ok(result);
     }
