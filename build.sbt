@@ -15,5 +15,6 @@ libraryDependencies ++= Seq(
   cache,
   javaWs,
   "edu.uci.ics" % "crawler4j" % "4.1",
-  "org.neo4j" % "neo4j" % "2.2.0"
+  "org.neo4j" % "neo4j" % "2.2.0",
+  "org.apache.opennlp" % "opennlp-tools" % "1.5.3"
 )

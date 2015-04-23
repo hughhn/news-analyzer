@@ -31,12 +31,12 @@ public class Analyzer extends Controller {
         args[1] = "2";
         args[2] = url;
 
-        try {
-            BasicCrawlController.run(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("crawler error!");
-        }
+//        try {
+//            BasicCrawlController.run(args);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            logger.error("crawler error!");
+//        }
 
         return Results.ok(result);
     }
