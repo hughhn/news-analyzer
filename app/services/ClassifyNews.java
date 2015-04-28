@@ -122,7 +122,7 @@ public class ClassifyNews {
         System.out.println(evaluator);
     }
 
-    public static void classify(String url, String text) {
+    public static JointClassification classify(String url, String text) {
         if (compiledClassifier == null) {
             try {
                 train(new String[0]);
@@ -137,5 +137,7 @@ public class ClassifyNews {
         System.out.println("Got best category of: " + bestCategory);
         System.out.println(jc.toString());
         System.out.println("---------------");
+
+        return jc;
     }
 }

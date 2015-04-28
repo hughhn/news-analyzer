@@ -22,3 +22,5 @@ libraryDependencies ++= Seq(
   "xerces" % "xercesImpl" % "2.11.x",
   "net.sourceforge.nekohtml" % "nekohtml" % "1.9.21"
 )
+
+javaOptions ++= Seq("-Xmx512M", "-Xmx2048M", "-XX:MaxPermSize=2048M")

@@ -1,5 +1,6 @@
 package controllers;
 
+import com.aliasi.classify.JointClassification;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.l3s.boilerpipe.BoilerpipeExtractor;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
@@ -52,14 +53,15 @@ public class Analyzer extends Controller {
 //        }
 
         try {
-            final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
-            final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
-            String title = doc.getTitle();
-            logger.debug("URL title extracted: " + title);
+            String content = ArticleExtractor.INSTANCE.getText(new URL(url));
 
-            String content = ArticleExtractor.INSTANCE.getText(doc);
+//            final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
+//            final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
+//            String title = doc.getTitle();
+//            logger.debug("URL title extracted: " + title);
+//            String content = ArticleExtractor.INSTANCE.getText(doc);
 
-            final BoilerpipeExtractor extractor = CommonExtractors.KEEP_EVERYTHING_EXTRACTOR;
+//            final BoilerpipeExtractor extractor = CommonExtractors.KEEP_EVERYTHING_EXTRACTOR;
 //            final ImageExtractor ie = ImageExtractor.INSTANCE;
 //
 //            List<Image> images = ie.process(new URL(url), extractor);
@@ -72,9 +74,11 @@ public class Analyzer extends Controller {
 //
 //            return new Content(title, content.substring(0, 200), image);
 
-            ClassifyNews.classify(url, content);
+            JointClassification jc = ClassifyNews.classify(url, content);
+            result.put("category", jc.bestCategory());
         } catch (Exception e) {
             e.printStackTrace();
+            result.put("category", "unknown");
         }
 
         return Results.ok(result);
