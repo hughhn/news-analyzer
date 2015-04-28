@@ -21,20 +21,39 @@ import com.aliasi.util.Files;
 public class ClassifyNews {
 
     private static File TRAINING_DIR
-        = new File("app/services/data/fourNewsGroups/4news-train");
+        = new File("app/services/data/fourNewsGroups/20news-bydate-train");
 
     private static File TESTING_DIR
-        =  new File("app/services/data/fourNewsGroups/4news-test");
+        =  new File("app/services/data/fourNewsGroups/20news-bydate-test");
 
     private static String[] CATEGORIES
-        = { "soc.religion.christian",
-            "talk.religion.misc",
-            "alt.atheism",
-            "misc.forsale" };
+        = { "alt.atheism",
+            "comp.graphics",
+            "comp.os.ms-windows.misc",
+            "comp.sys.ibm.pc.hardware",
+            "comp.sys.mac.hardware",
+            "comp.windows.x",
+            "misc.forsale",
+            "rec.autos",
+            "rec.motorcycles",
+            "rec.sport.baseball",
+            "rec.sport.hockey",
+            "sci.crypt",
+            "sci.electronics",
+            "sci.med",
+            "sci.space",
+            "soc.religion.christian",
+            "talk.politics.guns",
+            "talk.politics.mideast",
+            "talk.politics.misc",
+            "talk.religion.misc" };
 
     private static int NGRAM_SIZE = 6;
 
-    public static void main(String[] args)
+    @SuppressWarnings("unchecked") // we created object so know it's safe
+    private static JointClassifier<CharSequence> compiledClassifier;
+
+    public static void train(String[] args)
         throws ClassNotFoundException, IOException {
 
         DynamicLMClassifier<NGramProcessLM> classifier
@@ -64,8 +83,8 @@ public class ClassifyNews {
         }
         //compiling
         System.out.println("Compiling");
-        @SuppressWarnings("unchecked") // we created object so know it's safe
-        JointClassifier<CharSequence> compiledClassifier
+
+        compiledClassifier
             = (JointClassifier<CharSequence>)
             AbstractExternalizable.compile(classifier);
 
@@ -101,5 +120,22 @@ public class ClassifyNews {
 
         System.out.println("\nFULL EVAL");
         System.out.println(evaluator);
+    }
+
+    public static void classify(String url, String text) {
+        if (compiledClassifier == null) {
+            try {
+                train(new String[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Testing on: " + url);
+        JointClassification jc =
+                compiledClassifier.classify(text);
+        String bestCategory = jc.bestCategory();
+        System.out.println("Got best category of: " + bestCategory);
+        System.out.println(jc.toString());
+        System.out.println("---------------");
     }
 }
