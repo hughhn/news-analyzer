@@ -12,12 +12,15 @@ import de.l3s.boilerpipe.sax.HTMLDocument;
 import de.l3s.boilerpipe.sax.HTMLFetcher;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
+import maui.main.MauiModelBuilder;
+import maui.main.MauiTopicExtractor;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
 import services.ClassifyNews;
 import services.CrossValidateNews;
+import services.MauiIndexer;
 import services.SimpleWebCrawler;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -40,10 +43,7 @@ public class Analyzer extends Controller {
 //        WebURL crawlUrl = new WebURL();
 //        crawlUrl.setURL(url);
 
-        String[] args = new String[3];
-        args[0] = "./crawler_data";
-        args[1] = "2";
-        args[2] = url;
+//        String[] args = {"./crawler_data", "2", url};
 
 //        try {
 //            BasicCrawlController.run(args);
@@ -52,33 +52,42 @@ public class Analyzer extends Controller {
 //            logger.error("crawler error!");
 //        }
 
+//        try {
+//            String content = ArticleExtractor.INSTANCE.getText(new URL(url));
+//
+////            final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
+////            final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
+////            String title = doc.getTitle();
+////            logger.debug("URL title extracted: " + title);
+////            String content = ArticleExtractor.INSTANCE.getText(doc);
+//
+////            final BoilerpipeExtractor extractor = CommonExtractors.KEEP_EVERYTHING_EXTRACTOR;
+////            final ImageExtractor ie = ImageExtractor.INSTANCE;
+////
+////            List<Image> images = ie.process(new URL(url), extractor);
+////
+////            Collections.sort(images);
+////            String image = null;
+////            if (!images.isEmpty()) {
+////                image = images.get(0).getSrc();
+////            }
+////
+////            return new Content(title, content.substring(0, 200), image);
+//
+//            JointClassification jc = ClassifyNews.classify(url, content);
+//            result.put("category", jc.bestCategory());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            result.put("category", "unknown");
+//        }
+
+        String[] ops = {
+                "tagging"
+        };
         try {
-            String content = ArticleExtractor.INSTANCE.getText(new URL(url));
-
-//            final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
-//            final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
-//            String title = doc.getTitle();
-//            logger.debug("URL title extracted: " + title);
-//            String content = ArticleExtractor.INSTANCE.getText(doc);
-
-//            final BoilerpipeExtractor extractor = CommonExtractors.KEEP_EVERYTHING_EXTRACTOR;
-//            final ImageExtractor ie = ImageExtractor.INSTANCE;
-//
-//            List<Image> images = ie.process(new URL(url), extractor);
-//
-//            Collections.sort(images);
-//            String image = null;
-//            if (!images.isEmpty()) {
-//                image = images.get(0).getSrc();
-//            }
-//
-//            return new Content(title, content.substring(0, 200), image);
-
-            JointClassification jc = ClassifyNews.classify(url, content);
-            result.put("category", jc.bestCategory());
+            MauiIndexer.run(ops);
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("category", "unknown");
         }
 
         return Results.ok(result);

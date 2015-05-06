@@ -21,10 +21,10 @@ import com.aliasi.util.Files;
 public class ClassifyNews {
 
     private static File TRAINING_DIR
-        = new File("app/services/data/fourNewsGroups/20news-bydate-train");
+        = new File("app/services/lingpipe_data/fourNewsGroups/20news-bydate-train");
 
     private static File TESTING_DIR
-        =  new File("app/services/data/fourNewsGroups/20news-bydate-test");
+        =  new File("app/services/lingpipe_data/fourNewsGroups/20news-bydate-test");
 
     private static String[] CATEGORIES
         = { "alt.atheism",
