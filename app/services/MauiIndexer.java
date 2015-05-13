@@ -273,6 +273,16 @@ public class MauiIndexer {
         modelBuilder.buildModel(fileNames);
         modelBuilder.saveModel();
 
+        String text = "The Liber Eliensis (\"Book of Ely\") is a 12th-century English chronicle and history, written in Latin. Composed in three books, it was written at Ely Abbey on the island of Ely in the fenlands of eastern Cambridgeshire. Ely Abbey became the cathedral of a newly formed bishopric in 1109.";
+        try {
+            topicExtractor.modelPath = "test_maui_model";
+            topicExtractor.loadModel();
+            topicExtractor.configMauiFilter();
+            System.out.println("Keyphrases are: " + String.join(", ", topicExtractor.extractKeyphrasesFromText(text)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 //		// Settings for topic extractor
 //		topicExtractor.setDirName(testDir);
 //		topicExtractor.setModelName(modelName);
