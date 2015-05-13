@@ -1,7 +1,7 @@
 package maui.main;
 
 /*
- *    MauiTopicExtractor.java
+*    MauiTopicExtractor.java
  *    Copyright (C) 2001-2009 Eibe Frank, Olena Medelyan
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,7 +50,6 @@ import maui.filters.MauiFilter;
 import maui.stemmers.*;
 import maui.stopwords.*;
 import maui.vocab.Vocabulary;
-
 
 /**
  * Extracts topics from the documents in a given directory.
@@ -106,13 +106,13 @@ import maui.vocab.Vocabulary;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version 1.0
  */
-public class MauiTopicExtractor implements OptionHandler {
+public class MauiTopicExtractor implements OptionHandler, Serializable{
 	
 	/** Name of directory */
 	public String inputDirectoryName = null;
 	
 	/** Name of model */
-	public String modelName = null;
+	public String modelPath = null;
 	
 	/** Vocabulary name */
 	public String vocabularyName = "none";
@@ -149,7 +149,7 @@ public class MauiTopicExtractor implements OptionHandler {
 	private boolean cacheWikipediaData = false;
 	
 	/** The number of phrases to extract. */
-	public int topicsPerDocument = 10;
+	int topicsPerDocument = 10;
 	
 	/** Directory where vocabularies are stored **/
 	public String vocabularyDirectory = "data/vocabularies";
@@ -158,12 +158,16 @@ public class MauiTopicExtractor implements OptionHandler {
 	public Stemmer stemmer = new PorterStemmer();
 	
 	/** Llist of stopwords to be used */
-	public Stopwords stopwords = new StopwordsEnglish("data/stopwords/stopwords_en.txt");
+    public Stopwords stopwords = new StopwordsEnglish("/data/stopwords/stopwords_en.txt");
 	
 	
 	private Vocabulary vocabulary = null;
 	
-	
+    /** data instances to be used, for better performance**/	
+    private transient Instances data = null;
+    
+    private String wikipediaConfPath = null;
+    
 	/** Also write stemmed phrase and score into .key file. */
 	boolean additionalInfo = false;
 	
@@ -173,8 +177,7 @@ public class MauiTopicExtractor implements OptionHandler {
 	
 	
 	/** Build global dictionaries from the test set. */
-	boolean buildGlobalDictionary = false;
-	
+	boolean buildGlobalDictionary = true;	
 	
 	public boolean getDebug() {
 		return debugMode;
@@ -201,6 +204,9 @@ public class MauiTopicExtractor implements OptionHandler {
 	 * 
 	 * -e "encoding"<br>
 	 * Specifies encoding.<p>
+
+	 * -c<br>
+	 * Specifies the configuration path for wikipedia miner
      *
      *  -w "WikipediaDatabase@WikipediaServer" <br>
      * Specifies wikipedia data.<p>
@@ -221,20 +227,20 @@ public class MauiTopicExtractor implements OptionHandler {
 	 * @exception Exception if an option is not supported
 	 */
 	public void setOptions(String[] options) throws Exception {
-		
 		String dirName = Utils.getOption('l', options);
 		if (dirName.length() > 0) {
 			inputDirectoryName = dirName;
 		} else {
 			inputDirectoryName = null;
-			throw new Exception("Name of directory required argument.");
+			System.out.println("File directory is not used.. ");
+			//throw new Exception("Name of directory required argument.");
 		}
 
-		String modelName = Utils.getOption('m', options);
-		if (modelName.length() > 0) {
-			this.modelName = modelName;
+		String modelPath = Utils.getOption('m', options);
+		if (modelPath.length() > 0) {
+			this.modelPath = modelPath;
 		} else {
-			this.modelName = null;
+			this.modelPath = null;
 			throw new Exception("Name of model required argument.");
 		}
 
@@ -263,15 +269,9 @@ public class MauiTopicExtractor implements OptionHandler {
 		String encoding = Utils.getOption('e', options);
 		if (encoding.length() > 0) 
 			this.documentEncoding = encoding;
-		
-		String wikipediaConnection = Utils.getOption('w', options);
-		if (wikipediaConnection.length() > 0) {
-			int at = wikipediaConnection.indexOf("@");
-			wikipediaDatabase = wikipediaConnection.substring(0,at);
-			wikipediaServer = wikipediaConnection.substring(at+1);
-		} 
-		
 
+		wikipediaConfPath = Utils.getOption('c', options);
+		
 		String documentLanguage = Utils.getOption('i', options);
 		if (documentLanguage.length() > 0) 
 			this.documentLanguage = documentLanguage;
@@ -315,7 +315,7 @@ public class MauiTopicExtractor implements OptionHandler {
 		options[current++] = "-l"; 
 		options[current++] = "" + (this.inputDirectoryName);
 		options[current++] = "-m"; 
-		options[current++] = "" + (this.modelName);
+		options[current++] = "" + (this.modelPath);
 		options[current++] = "-v"; 
 		options[current++] = "" + (this.vocabularyName);
 		options[current++] = "-f"; 
@@ -455,11 +455,33 @@ public class MauiTopicExtractor implements OptionHandler {
 		}
 		return stems;
 	}
-	
-	/**
-	 * Builds the model from the files
-	 */
-	public void extractKeyphrases(HashSet<String> fileNames) throws Exception {
+
+    public HashSet<String> collectStems(String dirName) throws Exception {
+		
+	HashSet<String> stems = new HashSet<String>();
+		
+	try {
+	    File dir = new File(dirName);
+			
+	    for (String file : dir.list()) {
+		if (file.endsWith(".txt")) {
+		    String stem = file.substring(0, file.length() - 4);
+					
+		    if (!stems.contains(stem)) {
+			stems.add(stem);
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    throw new Exception("Problem reading directory " + inputDirectoryName);
+	}
+	return stems;
+    } 
+
+    /**
+     * Builds the model from the files
+     */
+    public void extractKeyphrases(HashSet<String> fileNames) throws Exception {
 		
 		// Check whether there is actually any data
 		if (fileNames.size() == 0) {
@@ -473,11 +495,14 @@ public class MauiTopicExtractor implements OptionHandler {
 		mauiFilter.setStopwords(stopwords);
 		if (wikipedia != null) {
 			mauiFilter.setWikipedia(wikipedia);
-		} else if (wikipediaServer.equals("localhost") && wikipediaDatabase.equals("database")) {
-			mauiFilter.setWikipedia(wikipedia);		
-		} else {
-			mauiFilter.setWikipedia(wikipediaServer, wikipediaDatabase, cacheWikipediaData, wikipediaDataDirectory);
 		}
+		else if(wikipediaConfPath != null){
+		    mauiFilter.setWikipedia(wikipediaConfPath);
+		}
+		else{
+		    throw new Exception("wikipediaConfPath should be set!");
+		}
+
 		if (!vocabularyName.equals("none") && !vocabularyName.equals("wikipedia") ) {
 			loadThesaurus(stemmer, stopwords, vocabularyDirectory);
 			mauiFilter.setVocabulary(vocabulary);
@@ -545,6 +570,8 @@ public class MauiTopicExtractor implements OptionHandler {
 			
 			data.add(new Instance(1.0, newInst));
 			
+			mauiFilter.setDebug(true);
+			
 			mauiFilter.input(data.instance(0));
 			
 			
@@ -585,6 +612,7 @@ public class MauiTopicExtractor implements OptionHandler {
 			
 			HashMap<Article, Integer> topics = null;
 			
+			System.out.println(printGraph);
 			if (printGraph) {
 				topics = new HashMap<Article, Integer>();
 			}
@@ -643,10 +671,10 @@ public class MauiTopicExtractor implements OptionHandler {
 				}
 			}
 			
-			if (printGraph) {
-				String graphFile = documentTopicsFile.getAbsolutePath().replace(".key",".gv");
-				computeGraph(topics, root, graphFile);
-			}
+			// if (printGraph) {
+			// 	String graphFile = documentTopicsFile.getAbsolutePath().replace(".key",".gv");
+			// 	computeGraph(topics, root, graphFile);
+			// }
 			if (numExtracted > 0) {
 				if (debugMode) {
 					System.err.println("-- " + numCorrect + " correct");
@@ -714,150 +742,159 @@ public class MauiTopicExtractor implements OptionHandler {
 		}
 		mauiFilter.batchFinished();
 	}
-	
-	/**
-	 * Prints out a plain-text representation of a graph representing the main topics of the document.
-	 * The nodes are the topics and the edges are relations between them as computed using the Wikipedia Miner.
-	 * Only possible if Wikipedia data is provided.
-	 * 
-	 * @param topics
-	 * @param root
-	 * @param outputFile
-	 */
-	public  void computeGraph(HashMap<Article, Integer> topics,
-			String root, String outputFile) {
-		FileOutputStream out;
-		PrintWriter printer;
-		try {
-			
-			if (debugMode) {
-				System.err.println("Printing graph information into " + outputFile);
-			}
-			
-			out = new FileOutputStream(outputFile);
-			printer = new PrintWriter(out);
 
-			printer.print("graph G {\n");
+    public void configMauiFilter() throws Exception{
+	mauiFilter.setVocabularyName(vocabularyName);
+	mauiFilter.setVocabularyFormat(vocabularyFormat);
+	mauiFilter.setDocumentLanguage(documentLanguage);
+	mauiFilter.setStemmer(stemmer);
+	mauiFilter.setStopwords(stopwords);
 
-			printer.print("graph [root=\"" + root
-					+ "\", outputorder=\"depthfirst\"];\n");
-
-			HashSet<String> done = new HashSet<String>();
-			double relatedness = 0;
-			for (Article a : topics.keySet()) {
-				int count = topics.get(a).intValue();
-				if (count < 1) {
-					printer.print("\"" + a.getTitle() + "\" [fontsize=22];\n");
-				} else if (count < 3) {
-					printer
-							.print("\"" + a.getTitle()
-									+ "\" [fontsize = 18];\n");
-				} else if (count < 6) {
-					printer
-							.print("\"" + a.getTitle()
-									+ "\" [fontsize = 14];\n");
-				} else {
-					printer
-							.print("\"" + a.getTitle()
-									+ "\" [fontsize = 12];\n");
-				}
-
-				for (Article c : topics.keySet()) {
-					if (!c.equals(a)) {
-						try {
-							relatedness = a.getRelatednessTo(c);
-							String relation = "\"" + a.getTitle() + "\" -- \""
-									+ c.getTitle();
-							String relation2 = "\"" + c.getTitle() + "\" -- \""
-									+ a.getTitle();
-
-							if (!done.contains(relation2)
-									&& !done.contains(relation)) {
-								done.add(relation2);
-								done.add(relation);
-
-								if (relatedness < 0.2) {
-									printer.print(relation
-											+ "\"[style=invis];\n");
-								} else {
-									printer.print(relation
-											+ "\" [penwidth = \""
-											+ (int) (relatedness * 10 - 0.2)
-											+ "\"];\n");
-								}
-							}
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			printer.print("}\n");
-			printer.close();
-			out.close();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+	if(data == null){
+	    data = getDataInstances();
 	}
 	
+	if (wikipedia != null) {
+	    mauiFilter.setWikipedia(wikipedia);
+	}
+	else if(wikipediaConfPath != null){
+	    mauiFilter.setWikipedia(wikipediaConfPath);
+	}
+	else{
+	    throw new Exception("wikipediaConfPath should be set!");
+	}
+
+	if (!vocabularyName.equals("none") && !vocabularyName.equals("wikipedia") ) {
+	    loadThesaurus(stemmer, stopwords, vocabularyDirectory);
+	    mauiFilter.setVocabulary(vocabulary);
+	}		
+    }
+
+    //does it make it slower?
+    public Instances getDataInstances(){
+	FastVector atts = new FastVector(3);
+	atts.addElement(new Attribute("filename", (FastVector) null));
+	atts.addElement(new Attribute("doc", (FastVector) null));
+	atts.addElement(new Attribute("keyphrases", (FastVector) null));
+	Instances data = new Instances("keyphrase_training_data", atts, 0);
+	return data;
+    }
+    
+    public String[] extractKeyphrasesFromText(String text) throws Exception {
+	System.err.println("-- Extracting keyphrases... ");
+
+	double[] newInst = new double[3];
+			
+	newInst[0] = (double)data.attribute(0).addStringValue("no a file name"); ;
+	newInst[1] = (double) data.attribute(1).addStringValue(text);
+	newInst[2] = Instance.missingValue();
+			
+	data.add(new Instance(1.0, newInst));
+			
+	mauiFilter.setDebug(true);
+	mauiFilter.input(data.instance(0));
+		
+	data = data.stringFreeStructure();
+
+	if (debugMode) {
+	    System.err.println("-- Processing document: " + text);
+	}
+
+	Instance[] topRankedInstances = new Instance[topicsPerDocument];
+	String[] topics = new String[topicsPerDocument];
+		
+	Instance inst;
+			
+	// Iterating over all extracted keyphrases (inst)
+	while ((inst = mauiFilter.output()) != null) {
+				
+	    int index = (int)inst.value(mauiFilter.getRankIndex()) - 1;
+			
+	    if (index < topicsPerDocument) {
+		topRankedInstances[index] = inst;
+		if(debugMode){
+		    System.out.println(inst);
+		}
+	    }
+	}
 	
+	if (debugMode) {
+	    System.err.println("-- Keyphrases and feature values:");
+	}
+
+	int p = 0;
+	String root = "";
+	for (int i = 0; i < topicsPerDocument; i++) {
+	    if (topRankedInstances[i] != null) {
+		topics[i] = topRankedInstances[i].stringValue(mauiFilter.getOutputFormIndex());
+	    }
+	    if (debugMode) {
+		System.err.println(topRankedInstances[i]);
+	    }
+	}
+		
+	//mauiFilter.batchFinished();
+	// mauiFilter.getWikipedia().getEnvironment().close();
+	// mauiFilter.getWikipedia().close();
+	return topics;
+    }
 	/** 
 	 * Loads the extraction model from the file.
 	 */
 	public void loadModel() throws Exception {
 		
-		BufferedInputStream inStream =
-			new BufferedInputStream(new FileInputStream(modelName));
-		ObjectInputStream in = new ObjectInputStream(inStream);
-		mauiFilter = (MauiFilter)in.readObject();
-		
-		// If TFxIDF values are to be computed from the test corpus
-		if (buildGlobalDictionary == true) {
-			if (debugMode) {
-				System.err.println("-- The global dictionaries will be built from this test collection..");
-			}
-			mauiFilter.globalDictionary = null;			
+	    BufferedInputStream inStream =
+		new BufferedInputStream(new FileInputStream(modelPath));
+	    ObjectInputStream in = new ObjectInputStream(inStream);
+	    mauiFilter = (MauiFilter)in.readObject();
+
+	    // If TFxIDF values are to be computed from the test corpus
+	    if (buildGlobalDictionary == true) {
+		if (debugMode) {
+		    System.err.println("-- The global dictionaries will be built from this test collection..");
 		}
-		in.close();
+		mauiFilter.globalDictionary = null;			
+	    }
+	    in.close();
 	}
 	
 	/**
 	 * The main method.  
 	 */
-	public static void run(String[] ops) {
-		
-		MauiTopicExtractor topicExtractor = new MauiTopicExtractor();
+    public static void main(String[] ops) {
+	    MauiTopicExtractor topicExtractor = new MauiTopicExtractor();
 		try {
 			// Checking and Setting Options selected by the user:
-			topicExtractor.setOptions(ops);      
-			System.err.print("Extracting keyphrases with options: ");
+		    topicExtractor.setOptions(ops);      
+		    
+		    System.err.print("Extracting keyphrases with options: ");
+		    
+		    // Reading Options, which were set above and output them:
+		    String[] optionSettings = topicExtractor.getOptions();
+		    for (int i = 0; i < optionSettings.length; i++) {
+			System.err.print(optionSettings[i] + " ");
+		    }
+		    System.err.println();
 			
-			// Reading Options, which were set above and output them:
-			String[] optionSettings = topicExtractor.getOptions();
-			for (int i = 0; i < optionSettings.length; i++) {
-				System.err.print(optionSettings[i] + " ");
-			}
-			System.err.println();
-			
-			// Loading selected Model:
-			System.err.println("-- Loading the model... ");
-			topicExtractor.loadModel();
-			
-			// Extracting Keyphrases from all files in the selected directory
-			topicExtractor.extractKeyphrases(topicExtractor.collectStems());
+		    // Loading selected Model:
+		    System.err.println("-- Loading the model... ");
+		    topicExtractor.loadModel();
+		    	
+		    // Extracting Keyphrases from all files in the selected directory
+		    topicExtractor.extractKeyphrases(topicExtractor.collectStems());
 			
 		} catch (Exception e) {
 			
-			// Output information on how to use this class
-			e.printStackTrace();
-			System.err.println(e.getMessage());
-			System.err.println("\nOptions:\n");
-			Enumeration<Option> en = topicExtractor.listOptions();
-			while (en.hasMoreElements()) {
-				Option option = (Option) en.nextElement();
-				System.err.println(option.synopsis());
-				System.err.println(option.description());
-			}
+		    // Output information on how to use this class
+		    e.printStackTrace();
+		    System.err.println(e.getMessage());
+		    System.err.println("\nOptions:\n");
+		    Enumeration<Option> en = topicExtractor.listOptions();
+		    while (en.hasMoreElements()) {
+			Option option = (Option) en.nextElement();
+			System.err.println(option.synopsis());
+			System.err.println(option.description());
+		    }
 		}
-	}
+    }
 }

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+
 import java.util.HashSet;
 
 /**
@@ -13,7 +15,7 @@ import java.util.HashSet;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version 1.0
  */
-public class StopwordsEnglish extends Stopwords {
+public class StopwordsEnglish extends Stopwords implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -47,7 +49,7 @@ public class StopwordsEnglish extends Stopwords {
 	 * Returns true if the given string is a stop word.
 	 */
 	public boolean isStopword(String str) {
-		return m_Stopwords.contains(str.toLowerCase());
+	    return m_Stopwords.contains(str.toLowerCase());
 	}
 }
 		

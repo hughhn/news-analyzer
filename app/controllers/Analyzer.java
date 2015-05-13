@@ -27,6 +27,10 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import java.io.IOException;
 import java.net.URL;
 
+import org.wikipedia.miner.model.Article;
+import org.wikipedia.miner.model.Wikipedia;
+import org.wikipedia.miner.util.WikipediaConfiguration;
+import java.io.File;
 /**
  * Created by hugo on 4/14/15.
  */
@@ -82,13 +86,55 @@ public class Analyzer extends Controller {
 //        }
 
         String[] ops = {
-                "tagging"
+                "indexing_with_wikipedia"
         };
         try {
             MauiIndexer.run(ops);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+//        Article article = null;
+//        try {
+//            WikipediaConfiguration conf = new WikipediaConfiguration(new File("/Users/hugh_sd/Projects/wikipedia-miner-1.2.0/configs/wikipedia-config.xml"));
+//
+//            Wikipedia wikipedia = new Wikipedia(conf, false);
+//
+//            article = wikipedia.getArticleByTitle("Wikipedia");
+//
+//            System.out.println(article.getSentenceMarkup(0));
+//
+//            wikipedia.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        if (article != null) {
+//            result.put("article", article.toString());
+//        }
+
+
+//        String[] ops = {
+//                "-v",
+//                "wikipedia",
+//                "-m",
+//                "./model-file",
+//                "-c",
+//                "/Users/hugh_sd/Projects/wikipedia-miner-1.2.0/configs/wikipedia-config.xml"
+//        };
+
+//        MauiTopicExtractor extractor = new MauiTopicExtractor();
+//        String text = "The Liber Eliensis (\"Book of Ely\") is a 12th-century English chronicle and history, written in Latin. Composed in three books, it was written at Ely Abbey on the island of Ely in the fenlands of eastern Cambridgeshire. Ely Abbey became the cathedral of a newly formed bishopric in 1109.";
+//        try {
+//            extractor.setOptions(ops);
+//            extractor.loadModel();
+//            extractor.configMauiFilter();
+//            System.out.println("Keyphrases are: " + String.join(", ", extractor.extractKeyphrasesFromText(text)));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         return Results.ok(result);
     }

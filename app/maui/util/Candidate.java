@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.wikipedia.miner.model.Anchor;
+import org.wikipedia.miner.model.Label;
 import org.wikipedia.miner.model.Article;
-import org.wikipedia.miner.model.Anchor.Sense;
+import org.wikipedia.miner.model.Label.Sense;
 
 public class Candidate {
 		
@@ -37,9 +37,9 @@ public class Candidate {
 		/** Total wikipedia keyphraseness */
 		double totalWikipKeyphraseness = 0;
 		
-		Anchor anchor = null;
+		Label label = null;
 		
-		Vector<Anchor> anchors = null;
+		Vector<Label> labels = null;
 		
 		/**
 		 * HashMap to store occurrence frequencies of all full forms
@@ -64,7 +64,7 @@ public class Candidate {
 		}
 		
 		public 	Candidate(String name, String fullForm, int  firstOccurrence,
-				Anchor anchor, double probability) {
+				Label label, double probability) {
 			
 			this.name = name;
 			this.frequency = 1;
@@ -78,7 +78,7 @@ public class Candidate {
 			
 			this.totalWikipKeyphraseness =  probability;
 			this.wikipKeyphraseness =  probability;
-			this.anchor = anchor;
+			this.label = label;
 		}
 
 		public Candidate getCopy() {
@@ -91,7 +91,7 @@ public class Candidate {
 			newCandidate.fullForms = this.fullForms;
 			newCandidate.totalWikipKeyphraseness = this.totalWikipKeyphraseness;
 			newCandidate.wikipKeyphraseness = this.wikipKeyphraseness;
-			newCandidate.anchor = this.anchor;
+			newCandidate.label = this.label;
 			return newCandidate;
 		}
 		
@@ -107,8 +107,8 @@ public class Candidate {
 		}
 		
 	
-		public Anchor getAnchor() {
-			return anchor;
+		public Label getLabel() {
+			return label;
 		}
 		
 		public double getWikipKeyphraseness() {
@@ -250,12 +250,12 @@ public class Candidate {
 		this.totalWikipKeyphraseness += previousCandidate.totalWikipKeyphraseness;
 		this.wikipKeyphraseness += previousCandidate.wikipKeyphraseness;
 		
-		// anchor should be added to the list of anchors
-		if (anchors == null) {
-			anchors = new Vector<Anchor>();
-			anchors.add(this.anchor);
+		// label should be added to the list of labels
+		if (labels == null) {
+			labels = new Vector<Label>();
+			labels.add(this.label);
 		}
-		anchors.add(previousCandidate.anchor);
+		labels.add(previousCandidate.label);
 		
 		// full forms should be added to the hash of full forms
 		if (fullForms == null) {
@@ -287,10 +287,10 @@ public class Candidate {
 			allFullForms +=  form + " (" + fullForms.get(form) + "), ";
 		}
 		
-		String allAnchors = "";
-		if (anchors != null) {
-			for (Anchor anch : anchors) {
-				allAnchors +=  anch + ", ";
+		String allLabels = "";
+		if (labels != null) {
+			for (Label anch : labels) {
+				allLabels +=  anch + ", ";
 			}
 		}
 		
@@ -305,14 +305,14 @@ public class Candidate {
 		result += "\tLastOcc: " + this.lastOccurrence + "\n";
 		result += "\tWikipKeyphr: " + this.wikipKeyphraseness + "\n";
 		result += "\tTotalWikipKeyphr: " + this.totalWikipKeyphraseness + "\n";
-		result += "\tAnchor: " + this.anchor + "\n";
-		result += "\tAnchors: " + allAnchors + "\n";
+		result += "\tLabel: " + this.label + "\n";
+		result += "\tLabels: " + allLabels + "\n";
 
 		return result;
 	}
 
-	public Vector<Anchor> getAnchors() {
-		return this.anchors;
+	public Vector<Label> getLabels() {
+		return this.labels;
 	}
 
 	private Article article;

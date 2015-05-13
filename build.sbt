@@ -23,4 +23,4 @@ libraryDependencies ++= Seq(
   "net.sourceforge.nekohtml" % "nekohtml" % "1.9.21"
 )
 
-javaOptions ++= Seq("-Xmx512M", "-Xmx2048M", "-XX:MaxPermSize=2048M")
+javaOptions ++= Seq("-Xms512M", "-Xmx8G", "-XX:MaxPermSize=4G", "-XX:-UseGCOverheadLimit")

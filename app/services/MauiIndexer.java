@@ -26,7 +26,7 @@ import java.util.HashSet;
 
 import maui.main.MauiModelBuilder;
 import maui.main.MauiTopicExtractor;
-import maui.stemmers.FrenchStemmer;
+//import maui.stemmers.FrenchStemmer;
 import maui.stemmers.PorterStemmer;
 import maui.stemmers.Stemmer;
 import maui.stopwords.Stopwords;
@@ -34,7 +34,8 @@ import maui.stopwords.StopwordsEnglish;
 import maui.stopwords.StopwordsFrench;
 
 import org.wikipedia.miner.model.Wikipedia;
-import org.wikipedia.miner.util.ProgressNotifier;
+//import org.wikipedia.miner.util.ProgressNotifier;
+import org.wikipedia.miner.util.WikipediaConfiguration;
 import org.wikipedia.miner.util.text.CaseFolder;
 import org.wikipedia.miner.util.text.TextProcessor;
 
@@ -59,42 +60,45 @@ public class MauiIndexer {
 
     private Wikipedia wikipedia;
 
+    private String wikiconfigPath;
     private String server;
     private String database;
     private String dataDirectory;
     private boolean cache = false;
 
-    public MauiIndexer (String server, String database, String dataDirectory, boolean cache) throws Exception  {
+    public MauiIndexer (String server, String database, String dataDirectory, boolean cache, String wikiconfigPath) throws Exception  {
         this.server = server;
         this.database = database;
         this.dataDirectory = dataDirectory;
         this.cache = cache;
+        this.wikiconfigPath = wikiconfigPath;
         loadWikipedia();
     }
 
     public MauiIndexer ()  {	}
 
     private void loadWikipedia() throws Exception {
+        WikipediaConfiguration conf = new WikipediaConfiguration(new File("/Users/hugh_sd/Projects/wikipedia-miner-1.2.0/configs/wikipedia-config.xml"));
+        wikipedia = new Wikipedia(conf, false);
 
-        wikipedia = new Wikipedia(server, database, "root", null);
-
-        TextProcessor textProcessor = new CaseFolder();
-
-        File dataDir = new File(dataDirectory);
-
-        if (cache) {
-            ProgressNotifier progress = new ProgressNotifier(5);
-            // cache tables that will be used extensively
-            TIntHashSet validPageIds = wikipedia.getDatabase().getValidPageIds(
-                    dataDir, 2, progress);
-            wikipedia.getDatabase().cachePages(dataDir, validPageIds,
-                    progress);
-            wikipedia.getDatabase().cacheAnchors(dataDir, textProcessor,
-                    validPageIds, 2, progress);
-            wikipedia.getDatabase().cacheInLinks(dataDir, validPageIds,
-                    progress);
-            wikipedia.getDatabase().cacheGenerality(dataDir, validPageIds, progress);
-        }
+//        TextProcessor textProcessor = new CaseFolder();
+//        File dataDir = new File(dataDirectory);
+//        wikipedia.getDatabase().loadData(dataDir, this.cache);
+//        wikipedia.getDatabase().prepareForTextProcessor(textProcessor);
+//
+//        if (cache) {
+//            ProgressNotifier progress = new ProgressNotifier(5);
+//            // cache tables that will be used extensively
+//            TIntHashSet validPageIds = wikipedia.getDatabase().getValidPageIds(
+//                    dataDir, 2, progress);
+//            wikipedia.getDatabase().cachePages(dataDir, validPageIds,
+//                    progress);
+//            wikipedia.getDatabase().cacheAnchors(dataDir, textProcessor,
+//                    validPageIds, 2, progress);
+//            wikipedia.getDatabase().cacheInLinks(dataDir, validPageIds,
+//                    progress);
+//            wikipedia.getDatabase().cacheGenerality(dataDir, validPageIds, progress);
+//        }
     }
 
     /**
@@ -128,7 +132,7 @@ public class MauiIndexer {
 		*/
 
         topicExtractor.debugMode = true;
-        topicExtractor.topicsPerDocument = 10;
+        //topicExtractor.topicsPerDocument = 10;
         topicExtractor.wikipedia = wikipedia;
     }
 
@@ -163,11 +167,11 @@ public class MauiIndexer {
         String testDir = "data/automatic_tagging/test";
 
         // name of the file to save the model
-        String modelName = "test_maui_model";
+        modelBuilder.modelPath = "test_maui_model";
 
         // Settings for the model builder
         modelBuilder.inputDirectoryName = trainDir;
-        modelBuilder.modelName = modelName;
+        //modelBuilder.modelName = modelName;
 
         // change to 1 for short documents
         modelBuilder.minNumOccur = 2;
@@ -179,7 +183,7 @@ public class MauiIndexer {
 
         // Settings for topic extractor
         topicExtractor.inputDirectoryName = testDir;
-        topicExtractor.modelName = modelName;
+        //topicExtractor.modelName = modelName;
 
 
         // Run topic extractor
@@ -214,7 +218,7 @@ public class MauiIndexer {
 
         // Settings for the model builder
         modelBuilder.inputDirectoryName = trainDir;
-        modelBuilder.modelName = modelName;
+        //modelBuilder.modelName = modelName;
         modelBuilder.vocabularyFormat = format;
         modelBuilder.vocabularyName = vocabulary;
 
@@ -225,7 +229,7 @@ public class MauiIndexer {
 
         // Settings for topic extractor
         topicExtractor.inputDirectoryName = testDir;
-        topicExtractor.modelName = modelName;
+        //topicExtractor.modelName = modelName;
         topicExtractor.vocabularyName = vocabulary;
         topicExtractor.vocabularyFormat = format;
 
@@ -256,12 +260,12 @@ public class MauiIndexer {
         String vocabulary = "wikipedia";
 
         // name of the file to save the model
-        String modelName = "test_maui_model";
+        modelBuilder.modelPath = "test_maui_model";
         HashSet<String> fileNames;
 
         // Settings for the model builder
         modelBuilder.inputDirectoryName = trainDir;
-        modelBuilder.modelName = modelName;
+        //modelBuilder.modelName = modelName;
         modelBuilder.vocabularyName = vocabulary;
 
         // Run model builder
@@ -312,10 +316,11 @@ public class MauiIndexer {
         } else if (mode.equals("indexing_with_wikipedia")) {
             // Access to Wikipedia
             String server = "localhost";
-            String database = "database";
-            String dataDirectory = "path/to/data/directory";
+            String database = "enwiki";
+            String dataDirectory = "/Users/hugh_sd/Projects/news-analyzer/enwiki-csv";
+            String wikiPath = "";
             boolean cache = false;
-            indexer = new MauiIndexer(server, database, dataDirectory, cache);
+            indexer = new MauiIndexer(server, database, dataDirectory, cache, wikiPath);
             indexer.testIndexingWithWikipedia();
         }
 
