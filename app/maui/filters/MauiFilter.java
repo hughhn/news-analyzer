@@ -1649,6 +1649,9 @@ public class MauiFilter extends Filter {
 		keys.addAll(candidatesTable.keySet());
 		for (String key : keys) {
 			Candidate candidate = candidatesTable.get(key);
+			if (debugMode) {
+				System.err.println("[DEBUG] candidate: " + candidate.getIdAndTitle());
+			}
 			if (candidate.getFrequency() < minOccurFrequency)
 				candidatesTable.remove(key);
 			else

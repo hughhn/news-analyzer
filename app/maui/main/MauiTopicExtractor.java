@@ -158,7 +158,7 @@ public class MauiTopicExtractor implements OptionHandler, Serializable{
 	public Stemmer stemmer = new PorterStemmer();
 	
 	/** Llist of stopwords to be used */
-    public Stopwords stopwords = new StopwordsEnglish("/data/stopwords/stopwords_en.txt");
+    public Stopwords stopwords = new StopwordsEnglish("data/stopwords/stopwords_en.txt");
 	
 	
 	private Vocabulary vocabulary = null;
