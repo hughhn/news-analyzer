@@ -33,6 +33,7 @@ import maui.stopwords.Stopwords;
 import maui.stopwords.StopwordsEnglish;
 import maui.stopwords.StopwordsFrench;
 
+import org.apache.commons.io.FileUtils;
 import org.wikipedia.miner.model.Wikipedia;
 //import org.wikipedia.miner.util.ProgressNotifier;
 import org.wikipedia.miner.util.WikipediaConfiguration;
@@ -258,7 +259,7 @@ public class MauiIndexer {
 
         // Directories with train & test data
         String trainDir = "/Users/hugh_sd/Projects/news-analyzer/data/wikipedia_indexing/train";
-        String testDir = "/Users/hugh_sd/Projects/news-analyzer/data/wikipedia_indexing/test";
+        String testDir = "/Users/hugh_sd/Projects/news-analyzer/data/wikipedia_indexing/test/";
 
         // Vocabulary
         String vocabulary = "wikipedia";
@@ -285,10 +286,12 @@ public class MauiIndexer {
 		// Run topic extractor
 		topicExtractor.loadModel();
 
-//		fileNames = topicExtractor.collectStems();
-//		topicExtractor.extractKeyphrases(fileNames);
-
         String text = "The Liber Eliensis (\"Book of Ely\") is a 12th-century English chronicle and history, written in Latin. Composed in three books, it was written at Ely Abbey on the island of Ely in the fenlands of eastern Cambridgeshire. Ely Abbey became the cathedral of a newly formed bishopric in 1109.";
+        FileUtils.writeStringToFile(new File(testDir + "test.txt"), text);
+		fileNames = topicExtractor.collectStems();
+		topicExtractor.extractKeyphrases(fileNames);
+
+
 //        String text = "ELON MUSK busies himself building other people’s futures. A serial entrepreneur who made his first fortune in the early days of the world wide web, he has since helped found a solar-power company to generate green electricity, an electric-car firm to liberate motorists from the internal-combustion engine, and a rocketry business—SpaceX—to pursue his desire to see a human colony on Mars within his lifetime. It makes him the sort of technologist you would expect might look on tomorrow with unbridled optimism.\n" +
 //                "\n" +
 //                "Not all future technology meets with his approval, though. In a speech in October at the Massachusetts Institute of Technology, Mr Musk described artificial intelligence (AI) as “summoning the demon”, and the creation of a rival to human intelligence as probably the biggest threat facing the world. He is not alone. Nick Bostrom, a philosopher at the University of Oxford who helped develop the notion of “existential risks”—those that threaten humanity in general—counts advanced artificial intelligence as one such, alongside giant asteroid strikes and all-out nuclear war. Lord Rees, who used to run the Royal Society, Britain’s foremost scientific body, has since founded the Centre for the Study of Existential Risk, in Cambridge, which takes the risks posed by AI just as seriously.\n" +
@@ -363,13 +366,13 @@ public class MauiIndexer {
 //                "\n" +
 //                "Cleverer computers, then, could be a truly transformative technology, though not—at least, not yet—for the reasons given by Mr Musk or Lord Rees. One day, perhaps, something like the sort of broad intelligence that characterises the human brain may be recreated in a machine. But for now, the best advice is to ignore the threat of computers taking over the world—and check that they are not going to take over your job first.";
 
-        try {
-            topicExtractor.configMauiFilter();
-            topicExtractor.debugMode = true;
-            System.out.println("Keyphrases are: " + String.join(", ", topicExtractor.extractKeyphrasesFromText(text)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            topicExtractor.configMauiFilter();
+//            topicExtractor.debugMode = true;
+//            System.out.println("Keyphrases are: " + String.join(", ", topicExtractor.extractKeyphrasesFromText(text)));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 

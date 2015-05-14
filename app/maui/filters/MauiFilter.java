@@ -609,12 +609,16 @@ public class MauiFilter extends Filter {
 		}
 
 		if (globalDictionary == null) {
-
+			if (debugMode) {
+				System.err.println("-- [DEBUG] MauiFilter.input() -> MauiFilter.bufferInput()");
+			}
 			bufferInput(instance);
 			return false;
 
 		} else {
-
+			if (debugMode) {
+				System.err.println("-- [DEBUG] MauiFilter.input() -> MauiFilter.convertInstance()");
+			}
 			FastVector vector = convertInstance(instance, false);
 			Enumeration<Instance> en = vector.elements();
 			while (en.hasMoreElements()) {
@@ -1061,12 +1065,12 @@ public class MauiFilter extends Filter {
 				newInst[totalWikipKeyphrIndex] = totalWikipKeyphr;
 			}
 
-		//	System.out.println(candidate + "\t wikip Keyphr " + newInst[wikipKeyphrIndex] + "\t total wikip Keyphr " + newInst[totalWikipKeyphrIndex]);
+			System.out.println(candidate + "\t wikip Keyphr " + newInst[wikipKeyphrIndex] + "\t total wikip Keyphr " + newInst[totalWikipKeyphrIndex]);
 
 		}
 
 		if (useAllWikipediaFeatures) {
-			//		System.out.println(candidate.getBestFullForm() + "\t" + original + "\t" + candidateArticle);
+					//System.out.println(candidate.getBestFullForm() + "\t" + original + "\t" + candidateArticle);
 					if (candidateArticle == null) {
 					    try {
 							if (label != null && label.getSenses().length > 0) {
@@ -1099,16 +1103,16 @@ public class MauiFilter extends Filter {
 						if (vocabularyName.equals("wikipedia") && candidateArticle != null) {
 							
 							for (Candidate c : candidates.values()) {
-							//	System.out.println("\t" + c + "\t" + c.getArticle() + " vs " + candidate + "\t" + c.equals(candidate));
+								//System.out.println("\t" + candidate + " vs " + c + "\t" + c.equals(candidate));
 								if (!c.getTitle().equals(candidate.getTitle())) {
-								//	System.out.println("Comparing " + c + " and " + candidateArticle);
+									//System.out.println("Comparing " + c + " and " + candidateArticle);
 										double relatedness = 0;
 										Article article = c.getArticle();
 									
 										try {
 										    relatedness = this.relatednessCache.getRelatedness(candidateArticle, article);
 											
-										//	System.out.println("\t r" + relatedness);
+											//System.out.println("\t relatedness = " + relatedness);
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
@@ -1118,8 +1122,8 @@ public class MauiFilter extends Filter {
 										
 								}
 							}
-						//	System.out.println("\t\t" + semRelatedness);
 							semRelatedness = semRelatedness / (candidates.size() - 1);
+							//System.out.println("\t\t semRelatedness = " + semRelatedness + " (" + candidate + ")");
 						} else {
 							semRelatedness= Instance.missingValue();
 						}
@@ -1127,8 +1131,8 @@ public class MauiFilter extends Filter {
 						newInst[semRelIndex] = semRelatedness;
 						newInst[invWikipFreqIndex] = wikipFrequency;
 						newInst[generalityIndex] = generality;
-					//	System.out.println(candidate + "\t sem rel  " + newInst[semRelIndex]
-					 //                                                   + "\t inv wikip freq  " + newInst[invWikipFreqIndex] + " general " + newInst[generalityIndex] );//
+						//System.out.println(candidate + "\t sem rel  " + newInst[semRelIndex]
+					    //                                                + "\t inv wikip freq  " + newInst[invWikipFreqIndex] + " general " + newInst[generalityIndex] );//
 
 				}
 
@@ -1153,13 +1157,13 @@ public class MauiFilter extends Filter {
 				newInst[numFeatures] = c; // Keyphrase
 			}
 		}
-		/*
+
 		System.out.println(candidate);
 		System.out.println("\tTFxIDF " + newInst[tfidfIndex]);
 		System.out.println("\ttotalWikipKeyphrIndex " + newInst[totalWikipKeyphrIndex]);
 		System.out.println("\tfirstOccurIndex " + newInst[firstOccurIndex]);
 		System.out.println("\tsemRelIndex " + newInst[semRelIndex]);
-		*/
+
 		return newInst;
 	}
 
