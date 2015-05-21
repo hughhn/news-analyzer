@@ -950,7 +950,8 @@ public class MauiFilter extends Filter {
 		
 			if ((training) && (hashKeyphrases != null)
 					&& (hashKeyphrases.containsKey(name))) {
-				newInst[domainKeyphIndex] = domainKeyphr.value() - 1;
+//				newInst[domainKeyphIndex] = domainKeyphr.value() - 1; // BUG
+				newInst[domainKeyphIndex] = domainKeyphr.value() - (hashKeyphrases.get(name).value());
 			} else {
 				if (domainKeyphr != null) {
 					newInst[domainKeyphIndex] = domainKeyphr.value();
@@ -1100,15 +1101,29 @@ public class MauiFilter extends Filter {
 							generality = Instance.missingValue();
 						}
 
-						if (vocabularyName.equals("wikipedia") && candidateArticle != null) {
+//			if (vocabularyName.equals("wikipedia") && candidateArticle != null) { // BUG
+						if (candidateArticle != null) {
 							
 							for (Candidate c : candidates.values()) {
 								//System.out.println("\t" + candidate + " vs " + c + "\t" + c.equals(candidate));
-								if (!c.getTitle().equals(candidate.getTitle())) {
-									//System.out.println("Comparing " + c + " and " + candidateArticle);
+								if (c.getTitle() != null && !c.getTitle().equals(candidate.getTitle())) {
+									//System.out.println("Comparing " + c.getArticle() + " and " + candidateArticle);
 										double relatedness = 0;
 										Article article = c.getArticle();
-									
+
+										if (article == null) {
+											try {
+												Label cLabel = new Label(wikipedia.getEnvironment(), c.getBestFullForm());
+												if (cLabel != null && cLabel.getSenses().length > 0) {
+													article = cLabel.getSenses()[0];
+												}
+											}
+											catch(Exception e){
+												e.printStackTrace();
+											}
+										}
+
+									    //System.out.println("Comparing " + article + " and " + candidateArticle);
 										try {
 										    relatedness = this.relatednessCache.getRelatedness(candidateArticle, article);
 											
@@ -1223,6 +1238,7 @@ public class MauiFilter extends Filter {
 		// Convert pending input instances into output data
 		for (int i = 0; i < getInputFormat().numInstances(); i++) {
 			Instance current = getInputFormat().instance(i);
+			System.err.println("[DEBUG] convertPendingInstances()! ");
 			FastVector vector = convertInstance(current, true);
 			Enumeration en = vector.elements();
 			while (en.hasMoreElements()) {
@@ -1261,8 +1277,10 @@ public class MauiFilter extends Filter {
 		// Compute the candidate topics
 		HashMap<String, Candidate> candidateList;
 		if (allCandidates != null && allCandidates.containsKey(instance)) {
+			System.err.println("[DEBUG] reuse candidates ");
 			candidateList = allCandidates.get(instance);
 		} else {
+			System.err.println("[DEBUG] get candidates ");
 			candidateList = getCandidates(documentText);
 		}
 		if (debugMode) {
@@ -1647,6 +1665,7 @@ public class MauiFilter extends Filter {
 		
 
 		if (vocabularyName.equals("wikipedia")) {
+//		if (wikipedia != null) {
 			candidatesTable = disambiguateCandidates(candidatesTable.values());
 		}
 		Set<String> keys = new HashSet<String>();
@@ -1656,10 +1675,14 @@ public class MauiFilter extends Filter {
 			if (debugMode) {
 				System.err.println("[DEBUG] candidate: " + candidate.getIdAndTitle());
 			}
-			if (candidate.getFrequency() < minOccurFrequency)
+			if (candidate.getFrequency() < minOccurFrequency) {
+				if (debugMode) {
+					System.err.println("[DEBUG] \t\tremove candidate: " + candidate.getIdAndTitle());
+				}
 				candidatesTable.remove(key);
-			else
+			} else {
 				candidate.normalize(totalFrequency, pos);
+			}
 		}	
 		
 		return candidatesTable;

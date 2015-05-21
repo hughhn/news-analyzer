@@ -1,0 +1,90 @@
+Clinkle Implodes As Employees Quit In Protest Of CEO
+
+Seven employees quit the frequently mocked payment rewards startup Clinkle simultaneously today due to frustration with its 24-year-old CEO Lucas Duplan, according to multiple sources close to the company. Duplan, pictured above, is said to have withheld information from employees about acquisition talks with Apple that the team hoped would result in a sale. He’s believed to have quietly dug for more buyout offers in hopes of improving his financial status because he holds an outsized amount of equity in the startup.
+
+As suspicions of a hidden Apple offer swirled, Duplan fired the company’s CFO and VP of engineering, which is said to have been the last straw for quite a few employees. Duplan has tasked the remaining team with stopping development of Clinkle’s debit card product to pivot the company into a business to business API for payment rewards.
+
+Screen Shot 2015-05-15 at 5.20.07 PMThis is only the latest bad news after years of ridicule for its massive $30 million funding round despite lacking a publicly available product, and highly critical reports of Duplan’s leadership through repeated layoffs at Clinkle.
+
+When asked for comment, Duplan said:
+
+With respect to [M&A], I can’t confirm or deny that any conversations have taken place or are taking place. Secondly, today we indeed did have a planned staff restructuring, and that’s actually part of a greater reorganization and cost abatement plan which we’ve been looking at doing for a while now.
+
+And then finally…the level of consumer engagement around the card specifically has not gained the traction quickly enough for us to continue pusuing it. That being said, the Treats concept shows terrific promise, and so what we’re focusing on right now is what’s the best way to actually commercialize that.
+
+So while Duplan wouldn’t comment on the acquisition talks, he confirms Clinkle is pivoting away from debit cards. However, a source firmly disputes the CEO’s characterization of the employees leaving today. They said the core employees quit because they felt misled by Duplan, and the company did not plan their departures. The remaining team is believed to be less than a dozen, down from 70 several years ago.
+
+[Update: Employees have begun celebrating that they quit, including software engineer Jason Benn.]
+
+
+
+A Lack Of Oversight
+
+Clinkle Early DemoClinkle’s goal was to offer a mobile wallet for wireless transactions, including Venmo-style, peer-to-peer payments, and paying merchants over ultrasound frequencies. The differentiator for users was that they could win rewards, including free purchases for using Clinkle. Business Insider’s Alyson Shontell wrote an in-depth history of Clinkle’s first few years that includes several anonymous employees’ criticisms of the young CEO.
+
+Founded at Stanford in 2011 by Duplan when he was just 19, Clinkle amassed a team of smart, driven students at the college despite refusing to show many a working prototype. Duplan’s co-founders Frank Li and Jason Riggs have both since parted ways with Clinkle.
+
+Yet suddenly, the startup was the talk of the town when it managed to raise $25 million in seed funding in June 2013 from top investors including Peter Thiel, Andreessen Horowitz, Marc Benioff, Jim Bryer, Accel Ventures and Index Partners.
+
+But rather than a traditional-priced seed round for equity, sources say Duplan structured the financing as convertible debt. One outcome of that was that Clinkle didn’t need to allow an investor on its board of directors, limiting oversight and keeping Duplan in firm control. The round was raised in small amounts from a large number of investors, which also kept anyone from dedicating more time to guiding Clinkle. Duplan secured another $5 million a few months later bringing Clinkle to over $30 million in funding.
+
+Clinkle Mobile Wallet
+
+Layoffs and Resignations
+
+Still, there was no app, and Shontell reported that contributed to internal turmoil. She wrote a year ago that “When it came to the actual app’s progress, multiple sources say Duplan wasn’t always straight with his employees.” When asked about the business, Shontell notes “he talked in circles, a trait employees described as typical.”
+
+COO Barry McCarthy resigned
+COO Barry McCarthy resigned
+
+After over-hiring for positions that were unnecessary since the app hadn’t launched, Duplan is said to have suddenly executed rounds of layoffs, firing up to a quarter of the staff. Shontell reports that Duplan’s right-hand man McCarthy “was said to have a temper, yelling at subordinates and issuing legal threats during firings.” A former Yahoo exec Chi-Chao Chang quit after just a day on the job. The company still only had a demo with no fully functional version of its product.
+
+In the following months, its VPs of engineering, design and operations all disconnected from Clinkle. Its database was hacked. Investors like Andreessen Horowitz are said to have distanced themselves from the startup. Duplan’s lieutenant, COO Barry McCarthy, resigned in March 2014. In an exit interview with Re/code’s Jason Del Rey, McCarthy said “They’re not nearly as close to scaling the businesses as I thought they were when I came in the door.”
+
+Looking For An Exit
+
+treats-cardAs of 2015, details on how Clinkle’s ultrasound mobile payments system worked were still scarce, and competitors were proliferating. Apple Pay was launching, Venmo had grown, Snapchat’s Snapcash and Square Cash had arrived. But in January I noticed the Clinkle website had rebranded into what was called “Treats,” a pivot from phone-based wireless payments to a debit card centered around lottery-style rewards.
+
+I spoke with Duplan, and detailed how Clinkle’s Treats product worked. Essentially, users would earn a Treat for every seventh purchase with their Clinkle debit card, which earned the startup interchange fees that typically go to the card issuer. These Treats could be sent to friends, and when they made their next purchase up to $25 with their Clinkle card, they could win a full refund of what they paid. Sort of like a social slot machine, Clinkle hoped to seduce users with the chance to win its little lottery.
+
+Multiple sources close to the company say that early trials of Treats at Salt Lake City colleges were well-received, with solid sign-up and engagement numbers. The problem was that issuing and mailing out the debit cards was too expensive for the startup to handle on its own.
+
+Clinkle began exploring a sale of its variable payments rewards system and Stanford-based engineering team. Multiple sources say that Duplan told the team that Clinkle was in talks with Apple, Google, Amazon, Samsung and Visa.
+
+While Clinkle’s brand had been tarnished by reports of its internal troubles, the companies were said to eye the variable reward system as a way to differentiate their mobile wallets and get users to demand merchants get on board.
+
+treat-friends-treats
+
+ 
+
+Due to the typically tiny fee mobile wallets earn, like the 0.15 percent Apple Pay is said to accrue, offering a traditional rewards system where every 10th purchase is free wasn’t economically feasible. The addictive slot machine style, where users had a chance of a reward each time they made a certain number of purchases, could work, though.
+
+After four years of work and ridicule, early employees at the company are said to have been actively encouraging a sale, even if it didn’t come with a massive acquisition price. Sources say that many employees didn’t have much to gain anyways. Duplan had offered only tiny shreds of equity, convincing hires that Clinkle could be a billion-dollar company and their share could turn into tons of money.
+
+Meeting With Apple And Google
+
+Spirits were lifted when on February 27th, Apple brought a team of about a dozen to Clinkle’s offices to assess the quality of its team and technology. For an hour-and-a-half, they grilled Clinkle’s engineers and investigated its technical stack, asking questions about back-end implementation and interface design.
+
+After approaching Google about a potential deal, a team of Clinkle’s top engineers visited Google to go through rigorous testing to see if the startup was worth acquiring. Sources say Google declined to issue an offer. Apple and Google declined to comment on this story.
+
+Related Articles
+Secret Shuts Down
+Facebook's Quest To Absorb The Internet
+Over the following months, Duplan repeatedly told his company they would be acquired, but preferred to meet with the tech giants on his own. Burned out, employees were eager for a sale so they could move on with their lives. Many felt that being acquired to power Apple Pay’s reward system would be an admirable outcome. But Duplan insisted Clinkle was worth a lot of money, more than just enough to pay back investors, but only as a team. He told employees to wait for the sale to go down.
+The Hidden Offer
+
+clinkle CardSuspicions began to grow about why Duplan was still talking about Apple months after the company came to Clinkle’s offices. Some began to believe that Apple had made an offer, but that Duplan had rejected it as too low without telling the company. Meanwhile, the CEO is said to have been largely absent from the office.
+
+At the height of the suspicions, Duplan fired two of the company’s leading executives who were the closest to the investment banker the CEO had hired to help with the sale. Clinkle’s CFO, former PayPal senior director of finance Mike Liberatore, and its VP of engineering, former PayPal engineering director Hank Pham, were suddenly booted from the company.
+
+Sources say many in the company are convinced the Apple offer was real, and that the execs were fired because they were trying to find out about it. Both Liberatore and Pham have scrubbed the name Clinkle from their LinkedIn profiles.
+
+Duplan is said to have then told the company it needed to immediately pivot Clinkle into a B2B API for adding variable rewards to a mobile wallet. Duplan explicitly said this was to give Clinkle leverage over Apple by giving it an alternative to sale. Clinkle might provide the rewards technology to Apple’s competitors if it didn’t acquire the startup.
+
+clinkle-sad
+
+But after years of turmoil, the firing of Liberatore and Pham is said to have convinced the remaining employees that Clinkle was not where they wanted to work.
+
+Today, seven employees quit Clinkle after becoming fed up with Duplan, including some of longest standing and most core employees left. More are expected to leave soon. Other high-profile departures listed on LinkedIn from the last six months include Clinkle’s Director Of Finance, Head Of Analytics, Director Of Business Operations, Engineering Director and Compliance Officer.
+
+The team’s exodus could scuttle acquisition talks and product development. It’s unclear what will happen to Clinkle now as it tries to pivot. Clunk.

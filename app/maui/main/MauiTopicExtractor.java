@@ -27,11 +27,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Vector;
+import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.wikipedia.miner.model.Article;
 import org.wikipedia.miner.model.Wikipedia;
 import org.wikipedia.miner.util.text.CaseFolder;
@@ -149,7 +147,7 @@ public class MauiTopicExtractor implements OptionHandler, Serializable{
 	private boolean cacheWikipediaData = false;
 	
 	/** The number of phrases to extract. */
-	int topicsPerDocument = 10;
+	public int topicsPerDocument = 10;
 	
 	/** Directory where vocabularies are stored **/
 	public String vocabularyDirectory = "data/vocabularies";
@@ -513,7 +511,7 @@ public class MauiTopicExtractor implements OptionHandler, Serializable{
 		atts.addElement(new Attribute("doc", (FastVector) null));
 		atts.addElement(new Attribute("keyphrases", (FastVector) null));
 		Instances data = new Instances("keyphrase_training_data", atts, 0);
-		
+
 		System.err.println("-- Extracting keyphrases... ");
 		
 		Vector<Double> correctStatistics = new Vector<Double>();
@@ -573,7 +571,7 @@ public class MauiTopicExtractor implements OptionHandler, Serializable{
 			mauiFilter.setDebug(true);
 			
 			mauiFilter.input(data.instance(0));
-			
+
 			
 			data = data.stringFreeStructure();
 			if (debugMode) {
@@ -584,7 +582,6 @@ public class MauiTopicExtractor implements OptionHandler, Serializable{
 			
 			// Iterating over all extracted keyphrases (inst)
 			while ((inst = mauiFilter.output()) != null) {
-				
 				int index = (int)inst.value(mauiFilter.getRankIndex()) - 1;
 			
 				if (index < topicsPerDocument) {
@@ -741,6 +738,32 @@ public class MauiTopicExtractor implements OptionHandler, Serializable{
 		System.err.println("");
 		}
 		mauiFilter.batchFinished();
+
+
+		Instance[] topRankedInstances = new Instance[topicsPerDocument];
+		Instance inst;
+
+		// Iterating over all extracted keyphrases (inst)
+		while ((inst = mauiFilter.output()) != null) {
+			int index = (int)inst.value(mauiFilter.getRankIndex()) - 1;
+
+			if (index < topicsPerDocument) {
+				topRankedInstances[index] = inst;
+			}
+		}
+		ArrayList<String> topics = new ArrayList<String>();
+
+		for (int i = 0; i < topicsPerDocument; i++) {
+			if (topRankedInstances[i] != null) {
+				String topic = topRankedInstances[i].stringValue(mauiFilter
+						.getOutputFormIndex());
+
+				topics.add(topic);
+			}
+		}
+
+		System.err.println("[DEBUG] Topics:");
+        System.err.println("\t" + StringUtils.join(topics, "\n\t"));
 	}
 
     public void configMauiFilter() throws Exception{

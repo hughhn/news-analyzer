@@ -14,6 +14,8 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 import maui.main.MauiModelBuilder;
 import maui.main.MauiTopicExtractor;
+import maui.main.MauiWrapper;
+import org.apache.commons.lang3.StringUtils;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -56,42 +58,55 @@ public class Analyzer extends Controller {
 //            logger.error("crawler error!");
 //        }
 
-//        try {
-//            String content = ArticleExtractor.INSTANCE.getText(new URL(url));
+        String content = "";
+        try {
+            //content = ArticleExtractor.INSTANCE.getText(new URL(url));
+
+            final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
+            final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
+            String title = doc.getTitle();
+            logger.debug("URL title extracted: " + title);
+            content = ArticleExtractor.INSTANCE.getText(doc);
+            //result.put("content", content);
+
+//            final BoilerpipeExtractor extractor = CommonExtractors.KEEP_EVERYTHING_EXTRACTOR;
+//            final ImageExtractor ie = ImageExtractor.INSTANCE;
 //
-////            final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
-////            final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
-////            String title = doc.getTitle();
-////            logger.debug("URL title extracted: " + title);
-////            String content = ArticleExtractor.INSTANCE.getText(doc);
+//            List<Image> images = ie.process(new URL(url), extractor);
 //
-////            final BoilerpipeExtractor extractor = CommonExtractors.KEEP_EVERYTHING_EXTRACTOR;
-////            final ImageExtractor ie = ImageExtractor.INSTANCE;
-////
-////            List<Image> images = ie.process(new URL(url), extractor);
-////
-////            Collections.sort(images);
-////            String image = null;
-////            if (!images.isEmpty()) {
-////                image = images.get(0).getSrc();
-////            }
-////
-////            return new Content(title, content.substring(0, 200), image);
+//            Collections.sort(images);
+//            String image = null;
+//            if (!images.isEmpty()) {
+//                image = images.get(0).getSrc();
+//            }
 //
-//            JointClassification jc = ClassifyNews.classify(url, content);
-//            result.put("category", jc.bestCategory());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            result.put("category", "unknown");
-//        }
+//            return new Content(title, content.substring(0, 200), image);
+
+            //JointClassification jc = ClassifyNews.classify(url, content);
+            //result.put("category", jc.bestCategory());
+        } catch (Exception e) {
+            e.printStackTrace();
+            //result.put("content", "NA");
+            result.put("keyphrases", "unknown");
+        }
+
+
 
         String[] ops = {
                 "indexing_with_wikipedia"
         };
         try {
-            MauiIndexer.run(ops);
+            //MauiIndexer.run(ops);
+
+//            String text = "The Liber Eliensis (\"Book of Ely\") is a 12th-century English chronicle and history, written in Latin. Composed in three books, it was written at Ely Abbey on the island of Ely in the fenlands of eastern Cambridgeshire. Ely Abbey became the cathedral of a newly formed bishopric in 1109.";
+//            MauiWrapper wrapper = new MauiWrapper("/Users/hugh_sd/Projects/news-analyzer/", "lcsh", "theses80");
+//            MauiWrapper wrapper = new MauiWrapper("/Users/hugh_sd/Projects/news-analyzer/", "wikipedia", "keyphrextr");
+            MauiWrapper wrapper = new MauiWrapper("/Users/hugh_sd/Projects/news-analyzer/", "wikipedia", "theses80");
+            //wrapper.extractTopicsFromFile("/Users/hugh_sd/Projects/news-analyzer/data/wikipedia_indexing/test/test.txt", 30);
+            result.put("keyphrases", StringUtils.join(wrapper.extractTopicsFromText(content, 30), ", "));
         } catch (Exception e) {
             e.printStackTrace();
+            result.put("keyphrases", "unknown");
         }
 
 
